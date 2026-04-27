@@ -113,7 +113,10 @@ public class FindPathAStar : MonoBehaviour
             if(IsClosed(neighbour)) continue;
 
             float G = Vector2.Distance(thisNode.location.ToVector(), neighbour.ToVector()) + thisNode.G;
-            float H = Vector2.Distance(thisNode.location.ToVector(), neighbour.ToVector()) + thisNode.G;
+            float H = Vector2.Distance(thisNode.location.ToVector(), neighbour.ToVector());
+            float F = G + H;
+
+            GameObject pathBlock = Instantiate(pathP, new Vector3(neighbour.x * maze.scale,0, neighbour.z * maze.scale), Quaternion.identity);
 
         }
 
