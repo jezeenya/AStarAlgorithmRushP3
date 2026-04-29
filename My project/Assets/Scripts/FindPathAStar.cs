@@ -39,7 +39,7 @@ public class PathMarker
 
     public override int GetHashCode()
     {
-        return 0;
+        return location.GetHashCode();
     }
 }
 public class FindPathAStar : MonoBehaviour
@@ -75,7 +75,7 @@ public class FindPathAStar : MonoBehaviour
 
         List<MapLocation> locations = new List<MapLocation>();
         for(int z = 1; z < maze.depth - 1; z++)
-        for(int x = 1; x < maze.depth - 1; x++)
+        for(int x = 1; x < maze.width - 1; x++)
         {
             if (maze.map[x, z] != 1) locations.Add(new MapLocation(x, z));
         }
@@ -101,6 +101,7 @@ public class FindPathAStar : MonoBehaviour
 
     void Search(PathMarker thisNode)
     {
+        if(thisNode == null) return;
         if(thisNode.Equals(goalNode))
         {
             done = true;
@@ -110,8 +111,8 @@ public class FindPathAStar : MonoBehaviour
         {
             MapLocation neighbour = dir + thisNode.location;
             if (maze.map[neighbour.x, neighbour.z] == 1) continue;
-            if(neighbour.x < 1 || neighbour.x >= maze.width || neighbour.z < 1 || neighbour.z >= maze.depth) continue;
-            if(IsClosed(neighbour)) continue;
+            if (neighbour.x < 1 || neighbour.x >= maze.width || neighbour.z < 1 || neighbour.z >= maze.depth) continue;
+            if (IsClosed(neighbour)) continue;
 
             float G = Vector2.Distance(thisNode.location.ToVector(), neighbour.ToVector()) + thisNode.G;
             float H = Vector2.Distance(neighbour.ToVector(), goalNode.location.ToVector());
@@ -138,13 +139,15 @@ public class FindPathAStar : MonoBehaviour
         open.RemoveAt(0);
         pm.marker.GetComponent<Renderer>().material = closedMaterial;
 
+        lastPos = pm;
+        
     }
 
     bool UpdateMarker(MapLocation pos, float g, float h, float f, PathMarker prt)
     {
         foreach (PathMarker p in open)
         {
-            if(p.location.Equals(pos))
+            if (g < p.G)
             {
                 p.G = g;
                 p.H = h;
